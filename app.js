@@ -89,51 +89,151 @@ document.addEventListener('DOMContentLoaded', () => {
     renderAll();
   }
 
-  // ==========================================================================
-  // DATA LOADING & PERSISTENCE
-  // ==========================================================================
-  async function loadData() {
-    try {
-      // 1. Load Companies (with LocalStorage cache)
-      const cachedCompanies = localStorage.getItem(STORAGE_KEY_COMPANIES);
-      if (cachedCompanies) {
-        state.companies = JSON.parse(cachedCompanies);
-      } else {
-        const response = await fetch('./data/companies.json');
-        state.companies = await response.json();
-        saveCompaniesToStorage();
-      }
-
-      // 2. Load Skills (with LocalStorage cache)
-      const cachedSkills = localStorage.getItem(STORAGE_KEY_SKILLS);
-      if (cachedSkills) {
-        state.skills = JSON.parse(cachedSkills);
-      } else {
-        const response = await fetch('./data/skills.json');
-        state.skills = await response.json();
-        saveSkillsToStorage();
-      }
-
-      // 3. Load Phase 2 (Static)
-      const phase2Response = await fetch('./data/phase2.json');
-      state.phase2 = await phase2Response.json();
-
-      // 4. Load Keywords (Static)
-      const keywordsResponse = await fetch('./data/keywords.json');
-      state.keywords = await keywordsResponse.json();
-
-    } catch (error) {
-      console.error('Error loading initial data files:', error);
-      showToast('❌ เกิดข้อผิดพลาดในการโหลดไฟล์ข้อมูล', '#ef4444');
-    }
-  }
-
   function saveCompaniesToStorage() {
     localStorage.setItem(STORAGE_KEY_COMPANIES, JSON.stringify(state.companies));
   }
 
-  function saveSkillsToStorage() {
-    localStorage.setItem(STORAGE_KEY_SKILLS, JSON.stringify(state.skills));
+  // ==========================================================================
+  // CSV PARSER HELPER
+  // ==========================================================================
+  function parseCSV(text) {
+    const lines = text.split(/\r?\n/).map(line => line.trim()).filter(line => line);
+    if (lines.length === 0) return [];
+    
+    const parseCSVLine = (line) => {
+      const result = [];
+      let current = '';
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+          result.push(current.trim());
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+      result.push(current.trim());
+      return result.map(val => {
+        if (val.startsWith('"') && val.endsWith('"')) {
+          return val.slice(1, -1).trim();
+        }
+        return val;
+      });
+    };
+
+    const headers = parseCSVLine(lines[0]);
+    const data = [];
+    for (let i = 1; i < lines.length; i++) {
+      const values = parseCSVLine(lines[i]);
+      const obj = {};
+      headers.forEach((header, index) => {
+        obj[header] = values[index] !== undefined ? values[index] : '';
+      });
+      data.push(obj);
+    }
+    return data;
+  }
+
+  // ==========================================================================
+  // DATA LOADING & PERSISTENCE (LIVE GOOGLE SHEETS MERGE)
+  // ==========================================================================
+  async function loadData() {
+    try {
+      const cachedCompanies = localStorage.getItem(STORAGE_KEY_COMPANIES);
+      let localList = cachedCompanies ? JSON.parse(cachedCompanies) : [];
+      
+      const cachedSkills = localStorage.getItem(STORAGE_KEY_SKILLS);
+      let localSkills = cachedSkills ? JSON.parse(cachedSkills) : [];
+
+      try {
+        // 1. Fetch Companies live from Google Sheet
+        const resCompanies = await fetch('https://docs.google.com/spreadsheets/d/1e9DvXcHgIBrkQoraDgwwvE8oISwLk-vuc8f7AFLfpZE/export?format=csv&gid=958186770');
+        const csvCompanies = await resCompanies.text();
+        const sheetList = parseCSV(csvCompanies);
+
+        // Merge Sheet updates with local edits
+        sheetList.forEach(sheetCompany => {
+          const localCompany = localList.find(c => c['บริษัท'] === sheetCompany['บริษัท']);
+          if (localCompany) {
+            // Keep status/notes edits, but sync other spreadsheet fields
+            localCompany['กลุ่มสาย'] = sheetCompany['กลุ่มสาย'];
+            localCompany['อุตสาหกรรม'] = sheetCompany['อุตสาหกรรม'];
+            localCompany['ที่ตั้งหลัก'] = sheetCompany['ที่ตั้งหลัก'];
+            localCompany['ทำไมเข้าเกณฑ์ / จุดเด่น'] = sheetCompany['ทำไมเข้าเกณฑ์ / จุดเด่น'];
+            localCompany['ตำแหน่งที่ควรเสิร์ช'] = sheetCompany['ตำแหน่งที่ควรเสิร์ช'];
+            localCompany['เงินเดือนจบใหม่ (ประมาณ, บาท/เดือน)'] = sheetCompany['เงินเดือนจบใหม่ (ประมาณ, บาท/เดือน)'];
+            localCompany['อัตราเติบโต/แนวโน้ม'] = sheetCompany['อัตราเติบโต/แนวโน้ม'];
+            localCompany['Priority'] = sheetCompany['Priority'];
+          } else {
+            // Brand new company added in the sheet
+            sheetCompany['Status'] = 'ยังไม่สมัคร';
+            sheetCompany['วันที่สมัคร'] = '';
+            sheetCompany['โน้ตของตัวเอง'] = '';
+            localList.push(sheetCompany);
+          }
+        });
+
+        // Filter out companies deleted from the spreadsheet
+        const sheetCompanyNames = sheetList.map(s => s['บริษัท']);
+        localList = localList.filter(c => sheetCompanyNames.includes(c['บริษัท']));
+        
+        state.companies = localList;
+        saveCompaniesToStorage();
+
+        // 2. Fetch Skills live from Google Sheet
+        const resSkills = await fetch('https://docs.google.com/spreadsheets/d/1e9DvXcHgIBrkQoraDgwwvE8oISwLk-vuc8f7AFLfpZE/export?format=csv&gid=901361552');
+        const csvSkills = await resSkills.text();
+        const sheetSkills = parseCSV(csvSkills);
+
+        // Merge Skills
+        sheetSkills.forEach(sheetSkill => {
+          const localSkill = localSkills.find(s => s['ทักษะ'] === sheetSkill['ทักษะ']);
+          if (localSkill) {
+            localSkill['ทำไมสำคัญ'] = sheetSkill['ทำไมสำคัญ'];
+            localSkill['แหล่งเรียน (เริ่มต้น)'] = sheetSkill['แหล่งเรียน (เริ่มต้น)'];
+            localSkill['เป้า Deadline'] = sheetSkill['เป้า Deadline'];
+          } else {
+            // New skill added in the sheet
+            sheetSkill['เสร็จแล้ว?'] = '🔄 กำลังทำ';
+            localSkills.push(sheetSkill);
+          }
+        });
+
+        // Filter out deleted skills
+        const sheetSkillNames = sheetSkills.map(s => s['ทักษะ']);
+        localSkills = localSkills.filter(s => sheetSkillNames.includes(s['ทักษะ']));
+
+        state.skills = localSkills;
+        saveSkillsToStorage();
+
+        // 3. Fetch Phase 2 live from Google Sheet (Static, override always)
+        const resPhase2 = await fetch('https://docs.google.com/spreadsheets/d/1e9DvXcHgIBrkQoraDgwwvE8oISwLk-vuc8f7AFLfpZE/export?format=csv&gid=1690908859');
+        const csvPhase2 = await resPhase2.text();
+        state.phase2 = parseCSV(csvPhase2);
+
+        // 4. Fetch Keywords live from Google Sheet (Static, override always)
+        const resKeywords = await fetch('https://docs.google.com/spreadsheets/d/1e9DvXcHgIBrkQoraDgwwvE8oISwLk-vuc8f7AFLfpZE/export?format=csv&gid=1167331677');
+        const csvKeywords = await resKeywords.text();
+        state.keywords = parseCSV(csvKeywords);
+
+        console.log('Successfully synced live data from Google Sheets!');
+
+      } catch (netError) {
+        console.warn('Network offline or error fetching live Sheets, falling back to local files:', netError);
+        
+        // Offline fallbacks
+        state.companies = localList.length > 0 ? localList : await fetch('./data/companies.json').then(r => r.json());
+        state.skills = localSkills.length > 0 ? localSkills : await fetch('./data/skills.json').then(r => r.json());
+        state.phase2 = await fetch('./data/phase2.json').then(r => r.json());
+        state.keywords = await fetch('./data/keywords.json').then(r => r.json());
+      }
+    } catch (error) {
+      console.error('Error loading data:', error);
+      showToast('❌ เกิดข้อผิดพลาดในการโหลดข้อมูล', '#ef4444');
+    }
   }
 
   // ==========================================================================
