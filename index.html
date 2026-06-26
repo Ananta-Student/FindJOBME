@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FindJOB | Job Target Tracker Dashboard</title>
+  <meta name="description" content="A premium local dashboard for tracking job applications, target companies, and skill milestones.">
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span class="material-symbols-rounded logo-icon">explore</span>
+      <h1>Find<span>JOB</span></h1>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <button class="nav-btn active" data-tab="tab-companies" id="nav-btn-companies">
+        <span class="material-symbols-rounded">business_center</span>
+        <span>บริษัทเป้าหมาย</span>
+      </button>
+      <button class="nav-btn" data-tab="tab-skills" id="nav-btn-skills">
+        <span class="material-symbols-rounded">model_training</span>
+        <span>ทักษะที่ต้องมี</span>
+      </button>
+      <button class="nav-btn" data-tab="tab-phase2" id="nav-btn-phase2">
+        <span class="material-symbols-rounded">map</span>
+        <span>แผนเฟส 2 (ภาคใต้)</span>
+      </button>
+      <button class="nav-btn" data-tab="tab-keywords" id="nav-btn-keywords">
+        <span class="material-symbols-rounded">search_check</span>
+        <span>คำค้นหาตำแหน่ง</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="action-btn export-btn" id="btn-export-data">
+        <span class="material-symbols-rounded">download</span>
+        <span>ส่งออกข้อมูล (Backup)</span>
+      </button>
+      <button class="action-btn reset-btn" id="btn-reset-data">
+        <span class="material-symbols-rounded">restart_alt</span>
+        <span>รีเซ็ตข้อมูลเริ่มต้น</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+    
+    <!-- Top Header -->
+    <header class="top-header">
+      <div class="header-title">
+        <h2>Job Target Tracker</h2>
+        <p>เตรียมไว้ใช้ปี 4 ก่อนจบ — อัปเดตสถานะการสมัครงานและสกิล</p>
+      </div>
+      
+      <!-- Stats Dashboard Grid -->
+      <div class="stats-grid">
+        <div class="stat-card" id="stat-total">
+          <div class="stat-info">
+            <span class="stat-label">บริษัททั้งหมด</span>
+            <h3 class="stat-value">0</h3>
+          </div>
+          <div class="stat-icon-wrapper blue">
+            <span class="material-symbols-rounded">corporate_fare</span>
+          </div>
+        </div>
+        
+        <div class="stat-card" id="stat-applied">
+          <div class="stat-info">
+            <span class="stat-label">สมัครแล้ว</span>
+            <h3 class="stat-value">0</h3>
+          </div>
+          <div class="stat-icon-wrapper green">
+            <span class="material-symbols-rounded">mail</span>
+          </div>
+        </div>
+
+        <div class="stat-card" id="stat-pending">
+          <div class="stat-info">
+            <span class="stat-label">ยังไม่ได้สมัคร</span>
+            <h3 class="stat-value">0</h3>
+          </div>
+          <div class="stat-icon-wrapper orange">
+            <span class="material-symbols-rounded">pending_actions</span>
+          </div>
+        </div>
+
+        <div class="stat-card" id="stat-skills">
+          <div class="stat-info">
+            <span class="stat-label">ทักษะพร้อมใช้งาน</span>
+            <h3 class="stat-value">0%</h3>
+          </div>
+          <div class="stat-icon-wrapper purple">
+            <span class="material-symbols-rounded">verified</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tab Contents Container -->
+    <div class="tab-container">
+      
+      <!-- TAB 1: COMPANIES -->
+      <section class="tab-panel active" id="tab-companies">
+        
+        <!-- Career Profile Advisor Panel -->
+        <div class="advisor-panel">
+          <div class="advisor-header" id="advisor-toggle">
+            <div class="advisor-title-row">
+              <span class="material-symbols-rounded advisor-icon">psychology</span>
+              <div class="advisor-text-group">
+                <h4>🎯 Career Profile Advisor (ตัวช่วยวิเคราะห์เป้าหมาย)</h4>
+                <p>ปรับเป้าหมายส่วนตัวเพื่อรับคำแนะนำบริษัทและทักษะพิเศษแบบเจาะลึก</p>
+              </div>
+            </div>
+            <span class="material-symbols-rounded toggle-arrow" id="advisor-arrow">keyboard_arrow_down</span>
+          </div>
+          
+          <div class="advisor-body collapsed" id="advisor-body">
+            <div class="advisor-grid">
+              <div class="form-group">
+                <label for="profile-track">สายงานที่มุ่งเน้น</label>
+                <div class="select-wrapper">
+                  <select id="profile-track" aria-label="Select Target Career Track">
+                    <option value="hybrid">CAE/Simulation + Data (Hybrid)</option>
+                    <option value="cae">Core CAE/Simulation (FEA/CFD)</option>
+                    <option value="data">Data/Smart Factory (Python/SQL)</option>
+                    <option value="pdm">Predictive Maintenance & Reliability</option>
+                    <option value="automation">Automation/Mechatronics</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="profile-location">ทำเลที่สนใจทำงาน</label>
+                <div class="select-wrapper">
+                  <select id="profile-location" aria-label="Select Target Job Location">
+                    <option value="flexible">ยืดหยุ่น (กรุงเทพ/ปริมณฑล/ชลบุรี/ระยอง)</option>
+                    <option value="bkk">กรุงเทพและปริมณฑลเท่านั้น</option>
+                    <option value="eastern">ชลบุรี/ระยอง (ภาคตะวันออก)</option>
+                    <option value="south">ภาคใต้ (สงขลา/หาดใหญ่)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="profile-project">โครงสร้าง Senior Project</label>
+                <div class="select-wrapper">
+                  <select id="profile-project" aria-label="Select Senior Project Structure">
+                    <option value="sim_python">Simulation + Python/Data Automation</option>
+                    <option value="sim_only">Pure Simulation (FEA/CFD)</option>
+                    <option value="hybrid_ml">Simulation + Experimental/Machine Learning</option>
+                    <option value="none">ยังไม่มีโปรเจกต์ / ทั่วไป</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dynamic Recommendation Box -->
+            <div class="recommendation-box" id="advisor-recommendation">
+              <!-- Dynamically populated via JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Filters Toolbar -->
+        <div class="toolbar">
+          <div class="search-bar">
+            <span class="material-symbols-rounded search-icon">search</span>
+            <input type="text" id="search-companies-input" placeholder="ค้นหาบริษัท, อุตสาหกรรม, ตำแหน่ง..." aria-label="Search companies">
+          </div>
+          
+          <div class="filters-group">
+            <div class="select-wrapper">
+              <select id="filter-sector" aria-label="Filter by Sector">
+                <option value="all">สายงานทั้งหมด</option>
+                <option value="CAE/Simulation">CAE/Simulation</option>
+                <option value="Data/Smart Factory">Data/Smart Factory</option>
+                <option value="Automation/Mechatronics">Automation/Mechatronics</option>
+                <option value="Engineering Software/Consulting">Engineering Software/Consulting</option>
+                <option value="Predictive Maintenance">Predictive Maintenance</option>
+              </select>
+            </div>
+
+            <div class="select-wrapper">
+              <select id="filter-priority" aria-label="Filter by Priority">
+                <option value="all">Priority ทั้งหมด</option>
+                <option value="1">Priority 1 (ตรงสายที่สุด)</option>
+                <option value="2">Priority 2 (ตรงสายรองลงมา)</option>
+                <option value="3">Priority 3 (สำรอง/เผื่อไว้)</option>
+              </select>
+            </div>
+
+            <div class="select-wrapper">
+              <select id="filter-status" aria-label="Filter by Status">
+                <option value="all">สถานะทั้งหมด</option>
+                <option value="ยังไม่สมัคร">ยังไม่สมัคร</option>
+                <option value="สมัครแล้ว">สมัครแล้ว</option>
+                <option value="กำลังดำเนินการ">กำลังดำเนินการ</option>
+                <option value="ได้ Offer">ได้ Offer</option>
+                <option value="ปฏิเสธ">ปฏิเสธ</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Companies Grid List -->
+        <div class="companies-grid" id="companies-list">
+          <!-- Dynamically Rendered -->
+        </div>
+      </section>
+
+      <!-- TAB 2: SKILLS TRACKER -->
+      <section class="tab-panel" id="tab-skills">
+        <div class="panel-header">
+          <h3>ทักษะที่ต้องมีก่อนจบ</h3>
+          <p>เช็คลิสต์ทักษะจับคู่กับเป้าหมาย Deadline ก่อนเรียนจบและเริ่มงานจริง</p>
+        </div>
+        
+        <div class="skills-layout">
+          <!-- Skills List -->
+          <div class="skills-card-list" id="skills-list">
+            <!-- Dynamically Rendered -->
+          </div>
+
+          <!-- Skills Summary Card -->
+          <div class="skills-summary-sidebar">
+            <div class="progress-radial-card">
+              <h4>ภาพรวมความพร้อม</h4>
+              <div class="radial-progress-container">
+                <svg class="radial-svg" viewBox="0 0 100 100">
+                  <circle class="bg-circle" cx="50" cy="50" r="40" />
+                  <circle class="progress-circle" cx="50" cy="50" r="40" id="radial-progress-circle" />
+                </svg>
+                <div class="radial-text" id="radial-progress-text">0%</div>
+              </div>
+              <p>เรียนรู้ทักษะที่จำเป็นเพื่อให้พร้อมสมัครงานบริษัทเป้าหมาย</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: PHASE 2 SOUTHERN PLAN -->
+      <section class="tab-panel" id="tab-phase2">
+        <div class="panel-header">
+          <h3>แผนเฟส 2 (กลับภาคใต้)</h3>
+          <p>บริษัทในสงขลา/หาดใหญ่ที่พอเข้าเกณฑ์ — ไว้เป็นจุดเริ่มต้นสำหรับย้ายกลับใต้ในอีก 3-5 ปีข้างหน้า</p>
+        </div>
+        
+        <div class="phase2-warning-card">
+          <span class="material-symbols-rounded warning-icon">info</span>
+          <p><strong>หมายเหตุ:</strong> ในสงขลาปัจจุบันเกือบทั้งหมดเป็นงานซ่อมบำรุง (Maintenance) หรือฝ่ายผลิต (Production) ทั่วไป ไม่ค่อยมีทีมจำลองและวิเคราะห์ข้อมูล (Simulation/Data) ตรงสายโดยตรง ใช้รายชื่อนี้สำหรับการวางแผนระยะยาว</p>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table" id="phase2-table">
+            <thead>
+              <tr>
+                <th>บริษัท</th>
+                <th>อุตสาหกรรม</th>
+                <th>ทำเล</th>
+                <th>ลักษณะงานที่เปิดบ่อย</th>
+                <th>ตรงสายไหม</th>
+                <th>โน้ตรายละเอียด</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Dynamically Rendered -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- TAB 4: JOB KEYWORDS HELPER -->
+      <section class="tab-panel" id="tab-keywords">
+        <div class="panel-header">
+          <h3>คำค้นหาตำแหน่งงาน (Search Keywords)</h3>
+          <p>ชื่อตำแหน่งภาษาไทยและอังกฤษที่ควรใช้ค้นหาใน JobsDB, LinkedIn, WorkVenture, หรือ JobThai</p>
+        </div>
+
+        <div class="keywords-grid" id="keywords-list">
+          <!-- Dynamically Rendered -->
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Edit Application Status Modal Overlay -->
+  <div class="modal-overlay" id="edit-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h4 id="modal-company-name">ชื่อบริษัท</h4>
+        <button class="close-btn" id="btn-close-modal">
+          <span class="material-symbols-rounded">close</span>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <form id="edit-form">
+          <input type="hidden" id="edit-company-id">
+          
+          <div class="form-group">
+            <label for="edit-status">สถานะการสมัคร</label>
+            <div class="select-wrapper">
+              <select id="edit-status" required>
+                <option value="ยังไม่สมัคร">ยังไม่สมัคร</option>
+                <option value="สมัครแล้ว">สมัครแล้ว</option>
+                <option value="กำลังดำเนินการ">กำลังดำเนินการ</option>
+                <option value="ได้ Offer">ได้ Offer</option>
+                <option value="ปฏิเสธ">ปฏิเสธ</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="edit-date">วันที่สมัคร</label>
+            <input type="date" id="edit-date">
+          </div>
+          
+          <div class="form-group">
+            <label for="edit-notes">โน้ต / บันทึกเพิ่มเติม</label>
+            <textarea id="edit-notes" rows="4" placeholder="ข้อมูลการสมัคร, คำแนะนำ, รายละเอียดการติดต่อ..."></textarea>
+          </div>
+          
+          <button type="submit" class="save-btn" id="btn-save-edit">บันทึกข้อมูล</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

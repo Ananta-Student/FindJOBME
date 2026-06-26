@@ -1,0 +1,11 @@
+{
+  "name": "findjob-dashboard",
+  "version": "1.0.0",
+  "description": "Local dashboard to track job applications, target companies, and skill learning milestones.",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python -m http.server 3000"
+  },
+  "author": "Antigravity",
+  "license": "ISC"
+}

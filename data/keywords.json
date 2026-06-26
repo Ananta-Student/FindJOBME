@@ -1,0 +1,56 @@
+[
+  {
+    "กลุ่ม": "CAE/Simulation",
+    "คำค้นหา (ไทย)": "วิศวกร CAE, วิศวกรจำลองโครงสร้าง",
+    "คำค้นหา (Eng)": "CAE Engineer, FEA Engineer, CFD Engineer, Simulation Engineer",
+    "ใช้หาบนแพลตฟอร์มไหนดี": "LinkedIn, JobsDB, เว็บบริษัทตรง"
+  },
+  {
+    "กลุ่ม": "CAE/Simulation",
+    "คำค้นหา (ไทย)": "วิศวกร R&D (ออกแบบ)",
+    "คำค้นหา (Eng)": "R&D Engineer (Mechanical), Design & Analysis Engineer",
+    "ใช้หาบนแพลตฟอร์มไหนดี": "LinkedIn, JobsDB"
+  },
+  {
+    "กลุ่ม": "Data/Smart Factory",
+    "คำค้นหา (ไทย)": "นักวิเคราะห์ข้อมูลการผลิต",
+    "คำค้นหา (Eng)": "Manufacturing Data Analyst, Process Data Engineer",
+    "ใช้หาบนแพลตฟอร์มไหนดี": "LinkedIn, JobsDB, WorkVenture"
+  },
+  {
+    "กลุ่ม": "Data/Smart Factory",
+    "คำค้นหา (ไทย)": "วิศวกร Digital/Smart Factory",
+    "คำค้นหา (Eng)": "Digital Engineer, Smart Factory Engineer, Industry 4.0 Engineer",
+    "ใช้หาบนแพลตฟอร์มไหนดี": "LinkedIn"
+  },
+  {
+    "กลุ่ม": "Data/Smart Factory",
+    "คำค้นหา (ไทย)": "วิศวกรความน่าเชื่อถือ (เครื่องจักร)",
+    "คำค้นหา (Eng)": "Reliability Engineer, Predictive Maintenance Engineer",
+    "ใช้หาบนแพลตฟอร์มไหนดี": "JobsDB, เว็บบริษัทพลังงาน/ปิโตรเคมีตรง"
+  },
+  {
+    "กลุ่ม": "Automation",
+    "คำค้นหา (ไทย)": "วิศวกรระบบอัตโนมัติ",
+    "คำค้นหา (Eng)": "Automation Engineer, Application Engineer (Robotics)",
+    "ใช้หาบนแพลตฟอร์มไหนดี": "JobsDB, LinkedIn"
+  },
+  {
+    "กลุ่ม": "Software/Consulting",
+    "คำค้นหา (ไทย)": "วิศวกรซัพพอร์ตซอฟต์แวร์ CAE",
+    "คำค้นหา (Eng)": "CAE Application Engineer, Technical Sales Engineer (Simulation)",
+    "ใช้หาบนแพลตฟอร์มไหนดี": "LinkedIn (ค้นชื่อบริษัทตรง: Ansys, Altair, Dassault)"
+  },
+  {
+    "กลุ่ม": "ทั่วไป (กันเหนียว)",
+    "คำค้นหา (ไทย)": "วิศวกรเครื่องกล จบใหม่ (โรงงานใหญ่)",
+    "คำค้นหา (Eng)": "Mechanical Engineer (Fresh Graduate)",
+    "ใช้หาบนแพลตฟอร์มไหนดี": "JobsDB, JobThai, WorkVenture"
+  },
+  {
+    "กลุ่ม": "Predictive Maintenance",
+    "คำค้นหา (ไทย)": "วิศวกร Predictive Maintenance, วิศวกรวิเคราะห์การสั่นสะเทือน",
+    "คำค้นหา (Eng)": "Predictive Maintenance Engineer, Reliability Engineer, Vibration Analyst, Condition Monitoring Engineer",
+    "ใช้หาบนแพลตฟอร์มไหนดี": "LinkedIn, JobsDB (มีหมวด Predictive Maintenance แยกเลย), เว็บบริษัทตรง (SKF, Emerson)"
+  }
+]
